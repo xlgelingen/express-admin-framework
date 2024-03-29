@@ -51,7 +51,7 @@ async function addUser() {
     await userService.addUser({ name: formData.name, phone: formData.phone, password: formData.password, role: formData.role }).then(function (data) {
         if (data.code === 200) {
             ElMessage({
-                message: '新建用户成功！',
+                message: '新建成功！',
                 type: 'success',
             })
             setTimeout(() => {
