@@ -62,8 +62,11 @@ async function saveRole() {
                 message: '修改成功！',
                 type: 'success',
             })
+            //这样，就能实现跳转路由之后刷新页面了
             setTimeout(() => {
-                router.push({ name: 'RoleIndex' })
+                router.push({ name: 'RoleIndex' }).then(() => {
+                    window.location.reload();
+                });
             }, 700)
         } else {
             console.log(data);
