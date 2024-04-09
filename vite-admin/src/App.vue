@@ -6,7 +6,7 @@ import { RouterView } from 'vue-router';
   <RouterView />
 </template>
 
-<style lang="less" scoped>
+<style lang="less">
 #nprogress .bar {
  background: #66B1FF !important;
  }
