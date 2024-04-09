@@ -96,8 +96,9 @@ async function editUserReq() {
             })
             setTimeout(() => {
                 if (userId.value !== loginUserID) {
-                    router.push({ name: 'UserIndex' })
-                    location.reload()
+                    router.push({ name: 'UserIndex' }).then(() => {
+                    window.location.reload();
+                });
                 }
             }, 700)
         } else {
