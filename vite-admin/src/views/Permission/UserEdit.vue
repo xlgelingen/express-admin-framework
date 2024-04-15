@@ -18,6 +18,7 @@ console.log('用户编辑/登录用户ID：', loginUserID)
 var editUser = reactive({});
 
 const originUser = reactive({});
+const formRef =ref()
 
 onMounted(async () => {
     try {
@@ -64,6 +65,13 @@ const dialogVisible = ref(false)
 
 async function handleConfirm() {
     dialogVisible.value = false;
+
+    const isValid = await formRef.value.validate();
+    if (!isValid) {
+        // 如果验证不通过，则直接返回，不执行后续操作
+        return;
+    }
+
     await editUserReq();
     const TOKEN_KEY = 'web_token';
     Cookies.remove(TOKEN_KEY);
@@ -116,6 +124,13 @@ async function saveUser() {
             type: 'error',
         })
     }
+
+    const isValid = await formRef.value.validate();
+    if (!isValid) {
+        // 如果验证不通过，则直接返回，不执行后续操作
+        return;
+    }
+
     console.log('userID:', userId.value, "name: ", editUser.name, "phone: ", editUser.phone, "password:", editUser.password, "role:", editUser.role)
 
     if (userId.value == loginUserID) {
@@ -146,7 +161,7 @@ function resetForm() {
             </template>
         </el-dialog>
         <div class="content-form">
-            <el-form :model="editUser" :rules="smsRules" status-icon label-position="top">
+            <el-form ref="formRef" :model="editUser" :rules="smsRules" status-icon label-position="top">
                 <el-form-item prop="name" label="用户名">
                     <el-input type="text" placeholder="请输入用户名" v-model="editUser.name" autocomplete="on"></el-input>
                 </el-form-item>

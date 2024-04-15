@@ -17,6 +17,7 @@ var allPermissions = store.allPermissions;
 
 var editRole = reactive({});
 const originRole = reactive({});
+const formRef = ref()
 
 onMounted(async () => {
     try {
@@ -54,6 +55,13 @@ async function saveRole() {
             type: 'error',
         })
     }
+
+    const isValid = await formRef.value.validate();
+    if (!isValid) {
+        // 如果验证不通过，则直接返回，不执行后续操作
+        return;
+    }
+
     console.log('allPermissions:', allPermissions)
     console.log("name: ", editRole.name, "slug: ", editRole.slug, "desc:", editRole.describe, "permissions:", editRole.permissions)
     await roleService.editRole({ id: roleId.value, name: editRole.name, slug: editRole.slug, describe: editRole.describe, permissions: JSON.stringify(editRole.permissions) }).then(function (data) {
@@ -83,7 +91,7 @@ function resetForm() {
 <template>
     <div class="content-form-wrapper">
         <div class="content-form">
-            <el-form :model="editRole" :rules="smsRules" status-icon label-position="top">
+            <el-form ref="formRef" :model="editRole" :rules="smsRules" status-icon label-position="top">
                 <el-form-item prop="name" label="用户名">
                     <el-input v-model="editRole.name" type="text" placeholder="请输入用户名" autocomplete="on"></el-input>
                 </el-form-item>

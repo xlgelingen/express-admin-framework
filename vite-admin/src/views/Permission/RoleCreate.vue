@@ -41,6 +41,11 @@ async function addRole() {
             type: 'error',
         })
     }
+    const isValid = await formRef.value.validate();
+    if (!isValid) {
+        // 如果验证不通过，则直接返回，不执行后续操作
+        return;
+    }
     console.log('allPermissions:', allPermissions)
     console.log("name: ", formData.name, "slug: ", formData.slug, "desc:", formData.desc, "permissions:", formData.permissions)
     try {

@@ -47,6 +47,13 @@ async function addUser() {
             type: 'error',
         })
     }
+
+    const isValid = await formRef.value.validate();
+    if (!isValid) {
+        // 如果验证不通过，则直接返回，不执行后续操作
+        return;
+    }
+    
     console.log("name: ", formData.name, "phone: ", formData.phone, "password:", formData.password, "role:", formData.role)
     await userService.addUser({ name: formData.name, phone: formData.phone, password: formData.password, role: formData.role }).then(function (data) {
         if (data.code === 200) {

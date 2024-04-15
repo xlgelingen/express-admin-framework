@@ -2,7 +2,7 @@
 // import { useRoute, useRouter } from 'vue-router';
 import { ref, reactive, computed } from 'vue';
 import { useStore } from '@/stores/index.js';
-import { getEditUser } from '@/utils/user.js'
+// import { getEditUser } from '@/utils/user.js'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import userService from '@/services/user';
 import Cookies from 'js-cookie';
@@ -37,6 +37,8 @@ const originUser = reactive({});
 
 // onMounted();
 
+const formRef = ref()
+
 const smsRules = {
     name: [
         { required: true, message: '请输入用户名', trigger: 'blur' }
@@ -67,6 +69,7 @@ const smsRules = {
 
 const dialogVisible = ref(false)
 
+
 function handleOnChange(index, size) {
     pageIndex.value = index;
     pageSize.value = size;
@@ -80,12 +83,18 @@ function handelEditUser(e) {
 
 async function privateSetUserInfo(userId) {
     try {
-        var userInfo = await getEditUser({ id: userId });
-        console.log('用户编辑/userInfo', userInfo)
+        // var userInfo = await getEditUser({ id: userId });
+        // console.log('用户编辑/userInfo', userInfo)
+        // Object.assign(originUser, userInfo);
+        // Object.assign(editUser, userInfo);
+        let userInfoArr = usersAll.filter((item) => {
+            return item.id == Number(userId)
+        })
+        let userInfo = userInfoArr[0]
         Object.assign(originUser, userInfo);
         Object.assign(editUser, userInfo);
-        console.log('用户编辑/editUser', editUser);
-        console.log('用户编辑/originUser', originUser);
+        // console.log('用户编辑/editUser', editUser);
+        // console.log('用户编辑/originUser', originUser);
     } catch (error) {
         console.error('获取编辑用户信息失败：', error);
     }
@@ -93,6 +102,13 @@ async function privateSetUserInfo(userId) {
 
 async function handleConfirm() {
     dialogVisible.value = false;
+
+    const isValid = await formRef.value.validate();
+    if (!isValid) {
+        // 如果验证不通过，则直接返回，不执行后续操作
+        return;
+    }
+
     await userService.editUser({ id: userId.value, name: editUser.name, phone: editUser.phone, password: editUser.password, role: editUser.role }).then(function (data) {
         if (data.code === 200) {
             ElMessage({
@@ -138,6 +154,13 @@ async function handleSaveUser() {
             type: 'error',
         })
     }
+
+    const isValid = await formRef.value.validate();
+    if (!isValid) {
+        // 如果验证不通过，则直接返回，不执行后续操作
+        return;
+    }
+
     console.log('userID:', userId.value, "name: ", editUser.name, "phone: ", editUser.phone, "password:", editUser.password, "role:", editUser.role)
 
     if (userId.value == loginUserID) {
@@ -240,7 +263,7 @@ function handleResetForm() {
             :body-style="{ paddingBottom: '80px' }" :footer-style="{ textAlign: 'right' }"
             @close="antDrawerVisible = false">
             <div class="content-form">
-                <el-form :model="editUser" :rules="smsRules" status-icon label-position="top">
+                <el-form ref="formRef" :model="editUser" :rules="smsRules" status-icon label-position="top">
                     <el-form-item prop="name" label="用户名">
                         <el-input type="text" placeholder="请输入用户名" v-model="editUser.name" autocomplete="on"></el-input>
                     </el-form-item>
